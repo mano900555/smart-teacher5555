@@ -1,0 +1,82 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { Camera, CheckCircle2, Search, ArrowRight } from 'lucide-react';
+
+export default function ScannerPage() {
+  const [manualId, setManualId] = useState('');
+  const [lastScanned, setLastScanned] = useState<string | null>(null);
+
+  const handleManualSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (manualId.trim()) {
+      setLastScanned(manualId);
+      setManualId('');
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="p-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+          >
+            <ArrowRight className="w-5 h-5 text-gray-600" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">مسح كروت الطلاب (ID Scanner)</h1>
+            <p className="text-sm text-gray-500">تسجيل الحضور الفوري عبر الكاميرا أو الـ ID</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-slate-900 rounded-3xl p-8 text-white text-center space-y-4 shadow-xl relative overflow-hidden">
+        <div className="w-20 h-20 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-2xl flex items-center justify-center mx-auto animate-pulse">
+          <Camera className="w-10 h-10" />
+        </div>
+        <div>
+          <h3 className="font-bold text-lg">كاميرا المسح الضوئي</h3>
+          <p className="text-xs text-gray-400 mt-1">وجّه الكاميرا نحو كود QR أو الـ Barcode الموجود على كارت الطالب</p>
+        </div>
+        <button className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm active:scale-95">
+          تشغيل الكاميرا
+        </button>
+      </div>
+
+      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+        <h3 className="font-bold text-gray-800 text-sm">إدخال يدوي (كود الطالب)</h3>
+        <form onSubmit={handleManualSubmit} className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="أدخل Center ID (مثال: 00125)..."
+              value={manualId}
+              onChange={(e) => setManualId(e.target.value)}
+              className="w-full pr-9 pl-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 font-medium"
+            />
+          </div>
+          <button
+            type="submit"
+            className="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm active:scale-95 shrink-0"
+          >
+            تسجيل
+          </button>
+        </form>
+      </div>
+
+      {lastScanned && (
+        <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl flex items-center gap-3 text-emerald-800 animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
+          <div>
+            <p className="font-bold text-sm">تم تسجيل الحضور بنجاح!</p>
+            <p className="text-xs text-emerald-600">الكود المسجل: {lastScanned}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
